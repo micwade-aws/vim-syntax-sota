@@ -5,7 +5,7 @@
 " Credits:	Scott "BDFL of SOTA" Idler 
 "		Benjamin Esquivel
 "
-"		Started with python.vim
+"		Started with python.vim and refactored from there..
 "
 " Optional highlighting can be controlled using these variables.
 "
@@ -29,73 +29,73 @@ elseif exists("b:current_syntax")
   finish
 endif
 
-" Keep Python keywords in alphabetical order inside groups for easy
-" comparison with the table in the 'Python Language Reference'
-" http://docs.python.org/reference/lexical_analysis.html#keywords.
-" Groups are in the order presented in NAMING CONVENTIONS in syntax.txt.
-" Exceptions come last at the end of each group (class and def below).
-syn keyword pythonStatement	False, None, True
-syn keyword pythonStatement	as assert break continue del exec global
-syn keyword pythonStatement	lambda nonlocal pass print return with yield
-syn keyword pythonStatement	class def nextgroup=pythonFunction skipwhite
-syn keyword pythonConditional	elif else if
-syn keyword pythonRepeat	for while
-syn keyword pythonOperator	and in is not or
-syn keyword pythonException	except finally raise try
-syn keyword pythonInclude	from import
+" Keep sota keywords in alphabetical order inside groups for easy
+" comparison with the table in the 'SOTA Language Reference'
+" A document that does not exist, and may never exist :).
+syn keyword sotaStatement	continue break
+syn keyword sotaStatement	print debug trace
+" syn keyword sotaStatement	False, None, True
+" syn keyword sotaStatement	as assert break continue del exec global
+" syn keyword sotaStatement	lambda nonlocal pass print return with yield
+" syn keyword sotaStatement	class def nextgroup=sotaFunction skipwhite
+syn keyword sotaConditional	if then elif else
+syn keyword sotaRepeat		do foreach while
+syn keyword sotaOperator	and in is not or
+syn keyword sotaException	except finally raise try
+syn keyword sotaInclude		from import
 
-" Decorators (new in Python 2.4)
-syn match   pythonDecorator	"@" display nextgroup=pythonFunction skipwhite
+" Decorators
+syn match   sotaDecorator	"@" display nextgroup=sotaFunction skipwhite
 " The zero-length non-grouping match before the function name is
-" extremely important in pythonFunction.  Without it, everything is
+" extremely important in sotaFunction.  Without it, everything is
 " interpreted as a function inside the contained environment of
 " doctests.
 " A dot must be allowed because of @MyClass.myfunc decorators.
-syn match   pythonFunction
+syn match   sotaFunction
       \ "\%(\%(def\s\|class\s\|@\)\s*\)\@<=\h\%(\w\|\.\)*" contained
 
-syn match   pythonComment	"#.*$" contains=pythonTodo,@Spell
-syn keyword pythonTodo		FIXME NOTE NOTES TODO XXX contained
+syn match   sotaComment	"#.*$" contains=sotaTodo,@Spell
+syn keyword sotaTodo		FIXME NOTE NOTES TODO XXX contained
 
 " Triple-quoted strings can contain doctests.
-syn region  pythonString
+syn region  sotaString
       \ start=+[uU]\=\z(['"]\)+ end="\z1" skip="\\\\\|\\\z1"
-      \ contains=pythonEscape,@Spell
-syn region  pythonString
+      \ contains=sotaEscape,@Spell
+syn region  sotaString
       \ start=+[uU]\=\z('''\|"""\)+ end="\z1" keepend
-      \ contains=pythonEscape,pythonSpaceError,pythonDoctest,@Spell
-syn region  pythonRawString
+      \ contains=sotaEscape,sotaSpaceError,sotaDoctest,@Spell
+syn region  sotaRawString
       \ start=+[uU]\=[rR]\z(['"]\)+ end="\z1" skip="\\\\\|\\\z1"
       \ contains=@Spell
-syn region  pythonRawString
+syn region  sotaRawString
       \ start=+[uU]\=[rR]\z('''\|"""\)+ end="\z1" keepend
-      \ contains=pythonSpaceError,pythonDoctest,@Spell
+      \ contains=sotaSpaceError,sotaDoctest,@Spell
 
-syn match   pythonEscape	+\\[abfnrtv'"\\]+ contained
-syn match   pythonEscape	"\\\o\{1,3}" contained
-syn match   pythonEscape	"\\x\x\{2}" contained
-syn match   pythonEscape	"\%(\\u\x\{4}\|\\U\x\{8}\)" contained
+syn match   sotaEscape	+\\[abfnrtv'"\\]+ contained
+syn match   sotaEscape	"\\\o\{1,3}" contained
+syn match   sotaEscape	"\\x\x\{2}" contained
+syn match   sotaEscape	"\%(\\u\x\{4}\|\\U\x\{8}\)" contained
 " Python allows case-insensitive Unicode IDs: http://www.unicode.org/charts/
-syn match   pythonEscape	"\\N{\a\+\%(\s\a\+\)*}" contained
-syn match   pythonEscape	"\\$"
+syn match   sotaEscape	"\\N{\a\+\%(\s\a\+\)*}" contained
+syn match   sotaEscape	"\\$"
 
-if exists("python_highlight_all")
-  if exists("python_no_builtin_highlight")
-    unlet python_no_builtin_highlight
+if exists("sota_highlight_all")
+  if exists("sota_no_builtin_highlight")
+    unlet sota_no_builtin_highlight
   endif
-  if exists("python_no_doctest_code_highlight")
-    unlet python_no_doctest_code_highlight
+  if exists("sota_no_doctest_code_highlight")
+    unlet sota_no_doctest_code_highlight
   endif
-  if exists("python_no_doctest_highlight")
-    unlet python_no_doctest_highlight
+  if exists("sota_no_doctest_highlight")
+    unlet sota_no_doctest_highlight
   endif
-  if exists("python_no_exception_highlight")
-    unlet python_no_exception_highlight
+  if exists("sota_no_exception_highlight")
+    unlet sota_no_exception_highlight
   endif
-  if exists("python_no_number_highlight")
-    unlet python_no_number_highlight
+  if exists("sota_no_number_highlight")
+    unlet sota_no_number_highlight
   endif
-  let python_space_error_highlight = 1
+  let sota_space_error_highlight = 1
 endif
 
 " It is very important to understand all details before changing the
@@ -110,154 +110,151 @@ endif
 " - 08 is not highlighted,
 " - 08e0 or 08j are highlighted,
 "
-" and so on, as specified in the 'Python Language Reference'.
-" http://docs.python.org/reference/lexical_analysis.html#numeric-literals
-if !exists("python_no_number_highlight")
+" and so on...
+if !exists("sota_no_number_highlight")
   " numbers (including longs and complex)
-  syn match   pythonNumber	"\<0[oO]\=\o\+[Ll]\=\>"
-  syn match   pythonNumber	"\<0[xX]\x\+[Ll]\=\>"
-  syn match   pythonNumber	"\<0[bB][01]\+[Ll]\=\>"
-  syn match   pythonNumber	"\<\%([1-9]\d*\|0\)[Ll]\=\>"
-  syn match   pythonNumber	"\<\d\+[jJ]\>"
-  syn match   pythonNumber	"\<\d\+[eE][+-]\=\d\+[jJ]\=\>"
-  syn match   pythonNumber
+  syn match   sotaNumber	"\<0[oO]\=\o\+[Ll]\=\>"
+  syn match   sotaNumber	"\<0[xX]\x\+[Ll]\=\>"
+  syn match   sotaNumber	"\<0[bB][01]\+[Ll]\=\>"
+  syn match   sotaNumber	"\<\%([1-9]\d*\|0\)[Ll]\=\>"
+  syn match   sotaNumber	"\<\d\+[jJ]\>"
+  syn match   sotaNumber	"\<\d\+[eE][+-]\=\d\+[jJ]\=\>"
+  syn match   sotaNumber
 	\ "\<\d\+\.\%([eE][+-]\=\d\+\)\=[jJ]\=\%(\W\|$\)\@="
-  syn match   pythonNumber
+  syn match   sotaNumber
 	\ "\%(^\|\W\)\@<=\d*\.\d\+\%([eE][+-]\=\d\+\)\=[jJ]\=\>"
 endif
 
-" Group the built-ins in the order in the 'Python Library Reference' for
-" easier comparison.
-" http://docs.python.org/library/constants.html
-" http://docs.python.org/library/functions.html
-" http://docs.python.org/library/functions.html#non-essential-built-in-functions
-" Python built-in functions are in alphabetical order.
-if !exists("python_no_builtin_highlight")
+" Group the built-ins together
+" constants.html
+" functions.html
+" functions.html#non-essential-built-in-functions
+if !exists("sota_no_builtin_highlight")
   " built-in constants
   " 'False', 'True', and 'None' are also reserved words in Python 3.0
-  syn keyword pythonBuiltin	False True None
-  syn keyword pythonBuiltin	NotImplemented Ellipsis __debug__
+  syn keyword sotaBuiltin	False True None
+  syn keyword sotaBuiltin	NotImplemented Ellipsis __debug__
   " built-in functions
-  syn keyword pythonBuiltin	abs all any bin bool chr classmethod foreach
-  syn keyword pythonBuiltin	compile complex delattr dict dir divmod
-  syn keyword pythonBuiltin	enumerate eval filter float format
-  syn keyword pythonBuiltin	frozenset getattr globals hasattr hash
-  syn keyword pythonBuiltin	help hex id input int isinstance
-  syn keyword pythonBuiltin	issubclass iter len list locals map max
-  syn keyword pythonBuiltin	min next object oct open ord pow print
-  syn keyword pythonBuiltin	property range repr reversed round set
-  syn keyword pythonBuiltin	setattr slice sorted staticmethod str
-  syn keyword pythonBuiltin	sum super tuple type vars zip __import__
+  syn keyword sotaBuiltin	abs all any bin bool chr classmethod foreach
+  syn keyword sotaBuiltin	compile complex delattr dict dir divmod
+  syn keyword sotaBuiltin	enumerate eval filter float format
+  syn keyword sotaBuiltin	frozenset getattr globals hasattr hash
+  syn keyword sotaBuiltin	help hex id input int isinstance
+  syn keyword sotaBuiltin	issubclass iter len list locals map max
+  syn keyword sotaBuiltin	min next object oct open ord pow print
+  syn keyword sotaBuiltin	property range repr reversed round set
+  syn keyword sotaBuiltin	setattr slice sorted staticmethod str
+  syn keyword sotaBuiltin	sum super tuple type vars zip __import__
   " Python 2.6 only
-  syn keyword pythonBuiltin	basestring callable cmp execfile file
-  syn keyword pythonBuiltin	long raw_input reduce reload unichr
-  syn keyword pythonBuiltin	unicode xrange
+  syn keyword sotaBuiltin	basestring callable cmp execfile file
+  syn keyword sotaBuiltin	long raw_input reduce reload unichr
+  syn keyword sotaBuiltin	unicode xrange
   " Python 3.0 only
-  syn keyword pythonBuiltin	ascii bytearray bytes exec memoryview
+  syn keyword sotaBuiltin	ascii bytearray bytes exec memoryview
   " non-essential built-in functions; Python 2.6 only
-  syn keyword pythonBuiltin	apply buffer coerce intern
+  syn keyword sotaBuiltin	apply buffer coerce intern
 endif
 
 " From the 'Python Library Reference' class hierarchy at the bottom.
-" http://docs.python.org/library/exceptions.html
-if !exists("python_no_exception_highlight")
+" http://docs.sota.org/library/exceptions.html
+if !exists("sota_no_exception_highlight")
   " builtin base exceptions (only used as base classes for other exceptions)
-  syn keyword pythonExceptions	BaseException Exception
-  syn keyword pythonExceptions	ArithmeticError EnvironmentError
-  syn keyword pythonExceptions	LookupError
+  syn keyword sotaExceptions	BaseException Exception
+  syn keyword sotaExceptions	ArithmeticError EnvironmentError
+  syn keyword sotaExceptions	LookupError
   " builtin base exception removed in Python 3.0
-  syn keyword pythonExceptions	StandardError
+  syn keyword sotaExceptions	StandardError
   " builtin exceptions (actually raised)
-  syn keyword pythonExceptions	AssertionError AttributeError BufferError
-  syn keyword pythonExceptions	EOFError FloatingPointError GeneratorExit
-  syn keyword pythonExceptions	IOError ImportError IndentationError
-  syn keyword pythonExceptions	IndexError KeyError KeyboardInterrupt
-  syn keyword pythonExceptions	MemoryError NameError NotImplementedError
-  syn keyword pythonExceptions	OSError OverflowError ReferenceError
-  syn keyword pythonExceptions	RuntimeError StopIteration SyntaxError
-  syn keyword pythonExceptions	SystemError SystemExit TabError TypeError
-  syn keyword pythonExceptions	UnboundLocalError UnicodeError
-  syn keyword pythonExceptions	UnicodeDecodeError UnicodeEncodeError
-  syn keyword pythonExceptions	UnicodeTranslateError ValueError VMSError
-  syn keyword pythonExceptions	WindowsError ZeroDivisionError
+  syn keyword sotaExceptions	AssertionError AttributeError BufferError
+  syn keyword sotaExceptions	EOFError FloatingPointError GeneratorExit
+  syn keyword sotaExceptions	IOError ImportError IndentationError
+  syn keyword sotaExceptions	IndexError KeyError KeyboardInterrupt
+  syn keyword sotaExceptions	MemoryError NameError NotImplementedError
+  syn keyword sotaExceptions	OSError OverflowError ReferenceError
+  syn keyword sotaExceptions	RuntimeError StopIteration SyntaxError
+  syn keyword sotaExceptions	SystemError SystemExit TabError TypeError
+  syn keyword sotaExceptions	UnboundLocalError UnicodeError
+  syn keyword sotaExceptions	UnicodeDecodeError UnicodeEncodeError
+  syn keyword sotaExceptions	UnicodeTranslateError ValueError VMSError
+  syn keyword sotaExceptions	WindowsError ZeroDivisionError
   " builtin warnings
-  syn keyword pythonExceptions	BytesWarning DeprecationWarning FutureWarning
-  syn keyword pythonExceptions	ImportWarning PendingDeprecationWarning
-  syn keyword pythonExceptions	RuntimeWarning SyntaxWarning UnicodeWarning
-  syn keyword pythonExceptions	UserWarning Warning
+  syn keyword sotaExceptions	BytesWarning DeprecationWarning FutureWarning
+  syn keyword sotaExceptions	ImportWarning PendingDeprecationWarning
+  syn keyword sotaExceptions	RuntimeWarning SyntaxWarning UnicodeWarning
+  syn keyword sotaExceptions	UserWarning Warning
 endif
 
-if exists("python_space_error_highlight")
+if exists("sota_space_error_highlight")
   " trailing whitespace
-  syn match   pythonSpaceError	display excludenl "\s\+$"
+  syn match   sotaSpaceError	display excludenl "\s\+$"
   " mixed tabs and spaces
-  syn match   pythonSpaceError	display " \+\t"
-  syn match   pythonSpaceError	display "\t\+ "
+  syn match   sotaSpaceError	display " \+\t"
+  syn match   sotaSpaceError	display "\t\+ "
 endif
 
 " Do not spell doctests inside strings.
 " Notice that the end of a string, either ''', or """, will end the contained
 " doctest too.  Thus, we do *not* need to have it as an end pattern.
-if !exists("python_no_doctest_highlight")
-  if !exists("python_no_doctest_code_higlight")
-    syn region pythonDoctest
+if !exists("sota_no_doctest_highlight")
+  if !exists("sota_no_doctest_code_higlight")
+    syn region sotaDoctest
 	  \ start="^\s*>>>\s" end="^\s*$"
-	  \ contained contains=ALLBUT,pythonDoctest,@Spell
-    syn region pythonDoctestValue
+	  \ contained contains=ALLBUT,sotaDoctest,@Spell
+    syn region sotaDoctestValue
 	  \ start=+^\s*\%(>>>\s\|\.\.\.\s\|"""\|'''\)\@!\S\++ end="$"
 	  \ contained
   else
-    syn region pythonDoctest
+    syn region sotaDoctest
 	  \ start="^\s*>>>" end="^\s*$"
 	  \ contained contains=@NoSpell
   endif
 endif
 
 " Sync at the beginning of class, function, or method definition.
-syn sync match pythonSync grouphere NONE "^\s*\%(def\|class\)\s\+\h\w*\s*("
+syn sync match sotaSync grouphere NONE "^\s*\%(def\|class\)\s\+\h\w*\s*("
 
-if version >= 508 || !exists("did_python_syn_inits")
+if version >= 508 || !exists("did_sota_syn_inits")
   if version <= 508
-    let did_python_syn_inits = 1
+    let did_sota_syn_inits = 1
     command -nargs=+ HiLink hi link <args>
   else
     command -nargs=+ HiLink hi def link <args>
   endif
 
   " The default highlight links.  Can be overridden later.
-  HiLink pythonStatement	Statement
-  HiLink pythonConditional	Conditional
-  HiLink pythonRepeat		Repeat
-  HiLink pythonOperator		Operator
-  HiLink pythonException	Exception
-  HiLink pythonInclude		Include
-  HiLink pythonDecorator	Define
-  HiLink pythonFunction		Function
-  HiLink pythonComment		Comment
-  HiLink pythonTodo		Todo
-  HiLink pythonString		String
-  HiLink pythonRawString	String
-  HiLink pythonEscape		Special
-  if !exists("python_no_number_highlight")
-    HiLink pythonNumber		Number
+  HiLink sotaStatement	Statement
+  HiLink sotaConditional	Conditional
+  HiLink sotaRepeat		Repeat
+  HiLink sotaOperator		Operator
+  HiLink sotaException	Exception
+  HiLink sotaInclude		Include
+  HiLink sotaDecorator	Define
+  HiLink sotaFunction		Function
+  HiLink sotaComment		Comment
+  HiLink sotaTodo		Todo
+  HiLink sotaString		String
+  HiLink sotaRawString	String
+  HiLink sotaEscape		Special
+  if !exists("sota_no_number_highlight")
+    HiLink sotaNumber		Number
   endif
-  if !exists("python_no_builtin_highlight")
-    HiLink pythonBuiltin	Function
+  if !exists("sota_no_builtin_highlight")
+    HiLink sotaBuiltin	Function
   endif
-  if !exists("python_no_exception_highlight")
-    HiLink pythonExceptions	Structure
+  if !exists("sota_no_exception_highlight")
+    HiLink sotaExceptions	Structure
   endif
-  if exists("python_space_error_highlight")
-    HiLink pythonSpaceError	Error
+  if exists("sota_space_error_highlight")
+    HiLink sotaSpaceError	Error
   endif
-  if !exists("python_no_doctest_highlight")
-    HiLink pythonDoctest	Special
-    HiLink pythonDoctestValue	Define
+  if !exists("sota_no_doctest_highlight")
+    HiLink sotaDoctest	Special
+    HiLink sotaDoctestValue	Define
   endif
 
   delcommand HiLink
 endif
 
-let b:current_syntax = "python"
+let b:current_syntax = "sota"
 
 " vim:set sw=2 sts=2 ts=8 noet:
