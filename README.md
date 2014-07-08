@@ -1,7 +1,7 @@
 vim-syntax-sota
 =================
 
-VIM syntax highlighting for SOTA configuration files
+VIM syntax highlighting for sota configuration files
 
 install
 =======
