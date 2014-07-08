@@ -1,8 +1,8 @@
 " Vim syntax file
-" Language:	SOTA
+" Language:	Sota
 " Maintainer:	Michael Wade
 " Last Change:	2014-7-4
-" Credits:	Scott "BDFL of SOTA" Idler 
+" Credits:	Scott "BDFL of Sota" Idler 
 "		Benjamin Esquivel
 "
 "		Started with python.vim and refactored from there..
