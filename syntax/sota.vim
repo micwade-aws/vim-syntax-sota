@@ -29,9 +29,7 @@ elseif exists("b:current_syntax")
   finish
 endif
 
-" Keep sota keywords in alphabetical order inside groups for easy
-" comparison with the table in the 'SOTA Language Reference'
-" A document that does not exist, and may never exist :).
+" Keep sota keywords in alphabetical order
 syn keyword sotaStatement	continue break
 syn keyword sotaStatement	print debug trace
 " syn keyword sotaStatement	False, None, True
