@@ -15,17 +15,17 @@ elseif exists("b:current_syntax")
   finish
 endif
 
-" Keep sota keywords in alphabetical order
-syn keyword sotaStatement	continue break
-syn keyword sotaStatement	print debug trace
-" syn keyword sotaStatement	False, None, True
+" KEYWORDS - please keep this alphabetical
+syn keyword sotaStatement	break continue
+syn keyword sotaStatement	debug print trace
+syn keyword sotaStatement	False, None, True
 " syn keyword sotaStatement	as assert break continue del exec global
 " syn keyword sotaStatement	lambda nonlocal pass print return with yield
 " syn keyword sotaStatement	class def nextgroup=sotaFunction skipwhite
-syn keyword sotaConditional	if then elif else
+syn keyword sotaConditional	elif else if then
 syn keyword sotaRepeat		do foreach while
-syn keyword sotaOperator	and in is not or
-syn keyword sotaException	except finally raise try
+"syn keyword sotaOperator	and in is not or
+"syn keyword sotaException	except finally raise try
 syn keyword sotaInclude		from import
 
 " Decorators
